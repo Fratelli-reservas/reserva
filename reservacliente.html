@@ -3,54 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fazer Reserva (Cliente)</title>
+  <title>Fazer Reserva</title>
   <style>
     body {
       background-color: #111;
       color: white;
       font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+      justify-content: center;
       padding: 20px;
     }
+
     .container {
       background: #222;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px #000;
       width: 100%;
-      max-width: 450px;
+      max-width: 480px;
+      box-shadow: 0 0 10px #000;
     }
+
     h2 {
       text-align: center;
       margin-bottom: 20px;
     }
+
     label {
       margin-top: 10px;
       display: block;
     }
-    input, textarea, button, select {
+
+    input, select, textarea, button {
       width: 100%;
       padding: 12px;
-      margin-top: 8px;
-      border: none;
+      margin-top: 6px;
       border-radius: 8px;
-      font-size: 16px;
-    }
-    input, textarea, select {
+      border: none;
       background-color: #333;
       color: white;
+      font-size: 16px;
     }
+
     button {
       background-color: #007bff;
-      color: white;
       cursor: pointer;
-      margin-top: 16px;
+      margin-top: 20px;
     }
+
     button:hover {
       background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -58,79 +63,98 @@
   <div class="container">
     <h2>Fazer Reserva</h2>
 
-    <label for="nome">Responsável / Aniversariante</label>
-    <input id="nome" placeholder="Ex: Maria da Silva" required />
+    <label for="nome">Responsável / Aniversariante *</label>
+    <input id="nome" required>
 
-    <label for="data">Data</label>
-    <input id="data" type="date" required />
+    <label for="data">Data *</label>
+    <input type="date" id="data" required>
 
-    <label for="mesa">Local desejado</label>
-    <select id="mesa" required>
-      <option value="">Selecione uma opção</option>
-      <option value="Perto do Palco">Perto do Palco</option>
-      <option value="Perto do Aquário">Perto do Aquário</option>
-      <option value="Perto do Playground">Perto do Playground</option>
-      <option value="Perto do Banheiro">Perto do Banheiro</option>
-      <option value="Do lado de fora">Do lado de fora</option>
+    <label for="espaco">Espaço Desejado *</label>
+    <select id="espaco" required>
+      <option value="">Selecione o espaço</option>
+      <option value="Espaço Louvada - R$ 200,00">Espaço Louvada (R$ 200,00)</option>
+      <option value="Área Externa">Área Externa</option>
+      <option value="Playground">Playground</option>
+      <option value="Próximo ao Palco">Próximo ao Palco</option>
     </select>
 
-    <label for="qtde">Quantidade de Pessoas</label>
-    <input id="qtde" type="number" placeholder="Ex: 8" required />
+    <label for="qtde">Quantidade de Pessoas *</label>
+    <input type="number" id="qtde" required>
 
-    <label for="telefone">Telefone</label>
-    <input id="telefone" placeholder="(00) 00000-0000" required />
+    <label for="telefone">Telefone *</label>
+    <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
 
-    <label for="obs">Observações</label>
+    <label for="obs">Observações (opcional)</label>
     <textarea id="obs" placeholder="Ex: aniversariante, pedido especial..."></textarea>
 
-    <label for="decor">Decoração</label>
-    <select id="decor">
+    <label for="decor">Decoração *</label>
+    <select id="decor" required>
       <option value="">Selecione</option>
-      <option value="Sim">Sim</option>
       <option value="Não">Não</option>
-      <option value="Sim de fora">Sim de fora</option>
+      <option value="Sim">Sim (decoração da casa)</option>
+      <option value="Sim de fora - R$ 100,00">Sim de fora (R$ 100,00)</option>
     </select>
 
-    <button onclick="salvar()">Salvar Reserva</button>
+    <button onclick="enviarReserva()">Salvar Reserva</button>
   </div>
 
   <script>
-    function salvar() {
+    async function enviarReserva() {
       const nome = document.getElementById("nome").value.trim();
       const data = document.getElementById("data").value;
-      const mesa = document.getElementById("mesa").value;
+      const espaco = document.getElementById("espaco").value;
       const qtde = document.getElementById("qtde").value;
-      const tel = document.getElementById("telefone").value;
-      const obs = document.getElementById("obs").value;
+      const tel = document.getElementById("telefone").value.trim();
+      const obs = document.getElementById("obs").value.trim();
       const decor = document.getElementById("decor").value;
 
-      if (!nome || !data || !mesa || !qtde || !tel) {
-        alert("Preencha os campos obrigatórios.");
+      if (!nome || !data || !espaco || !qtde || !tel || !decor) {
+        alert("Preencha todos os campos obrigatórios.");
         return;
       }
 
       const payload = {
-        nome, data, mesa, qtde, tel, obs, decor, status: "Pendente"
+        nome, data, mesa: espaco, qtde, tel, obs, decor,
+        status: "Pendente"
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          alert("✅ Reserva salva com sucesso!");
-          document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
+      try {
+        const res = await fetch("URL_DO_SEU_SCRIPT_GOOGLE", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+
+        if (json.status === "sucesso") {
+          alert("✅ Reserva feita com sucesso!");
+
+          // Enviar e-mail (ajuste backend necessário)
+          fetch("URL_ENVIO_EMAIL", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nome, tel, data, espaco, qtde, decor, obs
+            })
+          });
+
+          if (decor.includes("Sim")) {
+            if (confirm("Deseja falar com a decoradora agora?")) {
+              window.open("https://wa.me/556799999999", "_blank");
+            } else {
+              alert("Você pode contatar a decoradora: (67) 99999-9999");
+            }
+          }
+
+          window.location.href = "status.html";
         } else {
-          alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
+          alert("⚠️ " + (json.mensagem || "Erro ao salvar."));
         }
-      })
-      .catch(() => alert("❌ Erro ao se comunicar com o servidor."));
+      } catch (err) {
+        alert("❌ Erro ao se comunicar com o servidor.");
+        console.error(err);
+      }
     }
   </script>
 </body>
