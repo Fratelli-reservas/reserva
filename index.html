@@ -119,28 +119,28 @@
       };
 
       fetch("https://script.google.com/macros/s/AKfycbwCArUqsmyqaSCi69Ua_BeBVyAJ9Twe6bVBpH_91yc7dc2vN86BKb0jVqGM1ynAWZmvfw/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(r => r.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          alert("✅ Reserva feita com sucesso!");
-          if (decor === "Sim") {
-            if (confirm("Deseja falar com a decoradora agora?")) {
-              window.open("https://wa.me/5599999999999", "_blank");
-            } else {
-              alert("📞 Contato da decoradora: (99) 99999-9999");
-            }
-          }
-          window.location.href = "status.html";
-        } else {
-          alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
-        }
-      })
-      .catch(() => alert("❌ Erro ao se comunicar com o servidor."));
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+})
+.then(r => r.json())
+.then(resp => {
+  if (resp.status === "sucesso") {
+    alert("✅ Reserva feita com sucesso!");
+    if (decor === "Sim") {
+      if (confirm("Deseja falar com a decoradora agora?")) {
+        window.open("https://wa.me/5599999999999", "_blank");
+      } else {
+        alert("📞 Contato da decoradora: (99) 99999-9999");
+      }
     }
+    window.location.href = "status.html";
+  } else {
+    alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
+  }
+})
+.catch(() => alert("❌ Erro ao se comunicar com o servidor."));
+
   </script>
 </body>
 </html>
