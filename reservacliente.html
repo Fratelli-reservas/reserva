@@ -101,46 +101,50 @@
     <button onclick="salvar()">Salvar Reserva</button>
   </div>
 
-<script>
-  const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec";
+  <script>
+    function salvar() {
+      const nome = document.getElementById("nome").value.trim();
+      const data = document.getElementById("data").value;
+      const mesa = document.getElementById("mesa").value;
+      const qtde = document.getElementById("qtde").value;
+      const tel = document.getElementById("telefone").value;
+      const obs = document.getElementById("obs").value;
+      const decor = document.getElementById("decor").value;
 
-  function salvar() {
-    const nome = document.getElementById("nome").value.trim();
-    const data = document.getElementById("data").value;
-    const mesa = document.getElementById("mesa").value;
-    const qtde = document.getElementById("qtde").value;
-    const tel = document.getElementById("telefone").value;
-    const obs = document.getElementById("obs").value;
-    const decor = document.getElementById("decor").value;
+      if (!nome || !data || !mesa || !qtde || !tel) {
+        alert("Preencha os campos obrigatórios.");
+        return;
+      }
 
-    if (!nome || !data || !mesa || !qtde || !tel) {
-      alert("Preencha os campos obrigatórios.");
-      return;
+      const payload = {
+        nome,
+        data,
+        mesa,
+        qtde,
+        tel,
+        obs,
+        decor,
+        status: "Pendente"
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(resp => {
+        if (resp.status === "sucesso") {
+          alert("✅ Reserva salva com sucesso!");
+          document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
+        } else {
+          alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
+        }
+      })
+      .catch(() => alert("❌ Erro ao se comunicar com o servidor."));
     }
-
-    const form = new FormData();
-    form.append("nome", nome);
-    form.append("data", data);
-    form.append("mesa", mesa);
-    form.append("qtde", qtde);
-    form.append("tel", tel);
-    form.append("obs", obs);
-    form.append("decor", decor);
-    form.append("status", "Pendente");
-
-    fetch(URL_SCRIPT, {
-      method: "POST",
-      body: form
-    })
-    .then(() => {
-      alert("✅ Reserva enviada com sucesso!");
-      document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
-    })
-    .catch(() => {
-      alert("❌ Erro ao se comunicar com o servidor.");
-    });
-  }
-</script>
-
+  </script>
 </body>
 </html>
