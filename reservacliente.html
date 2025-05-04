@@ -102,6 +102,8 @@
   </div>
 
   <script>
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec";
+
     function salvar() {
       const nome = document.getElementById("nome").value.trim();
       const data = document.getElementById("data").value;
@@ -127,23 +129,21 @@
         status: "Pendente"
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec", {
+      fetch(URL_SCRIPT, {
         method: "POST",
+        mode: "no-cors", // necessário para evitar bloqueio de CORS no GitHub Pages
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       })
-      .then(response => response.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          alert("✅ Reserva salva com sucesso!");
-          document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
-        } else {
-          alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
-        }
+      .then(() => {
+        alert("✅ Reserva enviada com sucesso!");
+        document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
       })
-      .catch(() => alert("❌ Erro ao se comunicar com o servidor."));
+      .catch(() => {
+        alert("❌ Erro ao se comunicar com o servidor.");
+      });
     }
   </script>
 </body>
