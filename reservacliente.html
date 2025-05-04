@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fazer Reserva (Cliente)</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, textarea, button, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input, textarea, select {
+      background-color: #333;
+      color: white;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Fazer Reserva</h2>
+
+    <label for="nome">Responsável / Aniversariante</label>
+    <input id="nome" placeholder="Ex: Maria da Silva" required />
+
+    <label for="data">Data</label>
+    <input id="data" type="date" required />
+
+    <label for="mesa">Local desejado</label>
+    <select id="mesa" required>
+      <option value="">Selecione uma opção</option>
+      <option value="Perto do Palco">Perto do Palco</option>
+      <option value="Perto do Aquário">Perto do Aquário</option>
+      <option value="Perto do Playground">Perto do Playground</option>
+      <option value="Perto do Banheiro">Perto do Banheiro</option>
+      <option value="Do lado de fora">Do lado de fora</option>
+    </select>
+
+    <label for="qtde">Quantidade de Pessoas</label>
+    <input id="qtde" type="number" placeholder="Ex: 8" required />
+
+    <label for="telefone">Telefone</label>
+    <input id="telefone" placeholder="(00) 00000-0000" required />
+
+    <label for="obs">Observações</label>
+    <textarea id="obs" placeholder="Ex: aniversariante, pedido especial..."></textarea>
+
+    <label for="decor">Decoração</label>
+    <select id="decor">
+      <option value="">Selecione</option>
+      <option value="Sim">Sim</option>
+      <option value="Não">Não</option>
+      <option value="Sim de fora">Sim de fora</option>
+    </select>
+
+    <button onclick="salvar()">Salvar Reserva</button>
+  </div>
+
+  <script>
+    function salvar() {
+      const nome = document.getElementById("nome").value.trim();
+      const data = document.getElementById("data").value;
+      const mesa = document.getElementById("mesa").value;
+      const qtde = document.getElementById("qtde").value;
+      const tel = document.getElementById("telefone").value;
+      const obs = document.getElementById("obs").value;
+      const decor = document.getElementById("decor").value;
+
+      if (!nome || !data || !mesa || !qtde || !tel) {
+        alert("Preencha os campos obrigatórios.");
+        return;
+      }
+
+      const payload = {
+        nome,
+        data,
+        mesa,
+        qtde,
+        tel,
+        obs,
+        decor,
+        status: "Pendente"
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbz0y2Ce-WdLic_zo4AN5KclbDUAAy4zgAAjAMRSi3J-n0LZoSgyGXtanoZhV7tz4qgN8g/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(resp => {
+        if (resp.status === "sucesso") {
+          alert("✅ Reserva salva com sucesso!");
+          document.querySelectorAll("input, textarea, select").forEach(i => i.value = "");
+        } else {
+          alert("⚠️ " + (resp.mensagem || "Erro ao salvar."));
+        }
+      })
+      .catch(() => alert("❌ Erro ao se comunicar com o servidor."));
+    }
+  </script>
+</body>
+</html>
